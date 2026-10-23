@@ -103,7 +103,7 @@ input[type=text]{font:inherit;font-weight:700;text-align:center;padding:.6em;bor
 <body><div id="app">
 <header><h1>Simulasi LCC · Penyisihan</h1>
 <div class="tools"><input id="vol" type="range" min="0" max="1" step=".1" value=".7" style="width:80px" aria-label="Volume"><button class="ghost" data-a="mute" id="mu" title="Suara">🔊</button><button class="ghost" data-a="tts" id="tt" title="Bacakan soal otomatis">🗣️</button><button class="ghost" data-a="exit" id="ex" title="Keluar ke halaman muka">🚪 Keluar</button><button class="ghost" data-a="fs" title="Layar penuh">⛶</button></div></header>
-<div id="sc"></div><div id="main"></div><div class="ver">Versi 23-10-2026 · v5 (dashboard + WAR MAP)</div></div>
+<div id="sc"></div><div id="main"></div><div class="ver">Versi 23-10-2026 · v6 (soal Senin 50)</div></div>
 <script>
 const API="https://script.google.com/macros/s/AKfycbyPopT0QznHudfr2oUOXTOjOsKhfr3LnKZeycUCG6JpSLQ3r0bgjbIUxuvlvl2QfeAM/exec"; // web app Apps Script (lihat Code.gs); kosongkan untuk memakai soal bawaan
 const MP={BIN:["Bahasa Indonesia","📖","#ff5a5f"],ING:["Bahasa Inggris","🌍","#2fa8ff"],MTK:["Matematika","➕","#ff9f1c"],IPA:["IPA","🔬","#1fbf7a"],IPS:["IPS","🗺️","#a45cff"]};
@@ -185,7 +185,32 @@ const SN=[ // Set 2: Simulasi Senin
 ["BIN","W","Kalimat perintah banyak ditemukan dalam teks ...",["Prosedur","Deskripsi","Eksplanasi","Ulasan"],"Teks prosedur memakai kalimat perintah, misalnya “Tuangkan air panas.”"],
 ["BIN","W","Kalimat “Aroma kopi itu menyengat hidung” menggunakan cerapan indra ...",["Penciuman","Pendengaran","Pengecap","Peraba"],"Aroma ditangkap oleh indra penciuman."],
 ["BIN","R","Bagian ulasan novel yang berisi ringkasan isi cerita disebut ...",["Sinopsis","Rekomendasi","Identitas buku","Kelebihan"],"Sinopsis meringkas alur cerita tanpa membuka akhir secara detail."],
-["BIN","R","Konjungsi yang menyatakan sebab adalah ...",["Karena","Kemudian","Tetapi","Sehingga"],"“Karena” menyatakan sebab; “sehingga” menyatakan akibat."]
+["BIN","R","Konjungsi yang menyatakan sebab adalah ...",["Karena","Kemudian","Tetapi","Sehingga"],"“Karena” menyatakan sebab; “sehingga” menyatakan akibat."],
+["MTK","W","Rata-rata (mean) dari data 6, 8, 7, 9, 10 adalah ...",["8","7","9","40"],"Jumlah data = 40, banyak data = 5, sehingga mean = 40 ÷ 5 = 8."],
+["MTK","W","Jika f(x) = 3x − 2, nilai f(4) adalah ...",["10","14","12","6"],"f(4) = 3(4) − 2 = 12 − 2 = 10."],
+["MTK","W","Dua garis sejajar dipotong garis transversal. Jika salah satu sudut sehadap berukuran 70°, pasangan sudut sehadapnya berukuran ...",["70°","110°","20°","140°"],"Sudut sehadap pada dua garis sejajar besarnya sama, yaitu 70°."],
+["MTK","R","Suku berikutnya dari pola bilangan 2, 5, 8, 11, ... adalah ...",["14","15","13","16"],"Beda tiap suku 3, sehingga suku berikutnya 11 + 3 = 14."],
+["MTK","R","Bentuk baku (notasi ilmiah) dari 0,00045 adalah ...",["4,5 × 10⁻⁴","4,5 × 10⁻³","4,5 × 10⁻⁵","4,5 × 10⁴"],"Koma digeser 4 tempat ke kanan, sehingga 4,5 × 10⁻⁴."],
+["IPA","W","Benda diam akan tetap diam jika tidak ada gaya luar yang bekerja. Pernyataan ini adalah hukum Newton ...",["I (kelembaman)","II","III","Gravitasi"],"Hukum I Newton disebut hukum kelembaman (inersia)."],
+["IPA","W","Zat makanan yang menjadi sumber energi utama bagi tubuh adalah ...",["Karbohidrat","Vitamin","Mineral","Air"],"Karbohidrat dipecah menjadi glukosa sebagai sumber energi utama."],
+["IPA","W","Tempat terjadinya pertukaran gas oksigen dan karbon dioksida di paru-paru adalah ...",["Alveolus","Bronkus","Trakea","Laring"],"Dinding alveolus tipis dan dikelilingi kapiler sehingga gas mudah berdifusi."],
+["IPA","R","Pesawat sederhana berupa batang kaku yang bertumpu pada titik tumpu adalah ...",["Tuas (pengungkit)","Katrol","Bidang miring","Roda berporos"],"Tuas memiliki titik tumpu, titik beban, dan titik kuasa."],
+["IPA","R","Larutan gula merupakan campuran ...",["Homogen","Heterogen","Suspensi","Emulsi"],"Komponen larutan gula menyatu merata dan tidak dapat dibedakan, sehingga homogen."],
+["IPS","W","Sidang pertama BPUPKI (29 Mei – 1 Juni 1945) membahas masalah ...",["Dasar negara","Rancangan UUD","Pembagian wilayah","Pembentukan kabinet"],"Sidang pertama membahas dasar negara; sidang kedua membahas rancangan UUD."],
+["IPS","W","Sikap yang tepat menghadapi globalisasi adalah ...",["Memanfaatkan teknologi untuk memperkenalkan budaya lokal","Meniru seluruh budaya asing","Menolak semua perubahan","Meninggalkan bahasa daerah"],"Bersikap terbuka dan selektif: mengambil yang positif sambil melestarikan budaya sendiri."],
+["IPS","W","Alat pembayaran non-tunai yang nilainya diisi terlebih dahulu, misalnya kartu tol, disebut ...",["E-money","Cek","Obligasi","Deposito"],"E-money adalah uang elektronik berbasis chip atau server."],
+["IPS","R","Perbedaan kebutuhan antara petani dan pegawai kantor terutama dipengaruhi oleh faktor ...",["Pekerjaan","Usia","Iklim","Agama"],"Jenis pekerjaan menentukan kebutuhan, misalnya pakaian kerja dan peralatan."],
+["IPS","R","Bencana berupa gerakan tanah menuruni lereng disebut ...",["Tanah longsor","Banjir bandang","Gempa bumi","Erupsi gunung api"],"Longsor terjadi saat massa tanah bergerak ke bawah lereng."],
+["ING","W","Choose the correct question form: “They play football.”",["Do they play football?","Does they play football?","Are they play football?","They do play football?"],"Simple present dengan subjek they memakai do + subject + verb 1."],
+["ING","W","What is the comparative form of “good”?",["Better","Gooder","More good","Best"],"Good – better – best (irregular)."],
+["ING","W","Which expression is used to ask for permission?",["May I borrow your pen?","Shall we dance?","Watch out!","Congratulations!"],"“May I ...?” dipakai untuk meminta izin."],
+["ING","R","What is the past form (Verb 2) of “drink”?",["Drank","Drunk","Drinked","Drinks"],"Drink – drank – drunk."],
+["ING","R","What is the past participle (Verb 3) of “give”?",["Given","Gave","Gived","Giving"],"Give – gave – given."],
+["BIN","W","Bagian teks eksplanasi yang berisi pandangan atau simpulan penulis tentang fenomena disebut ...",["Interpretasi","Pernyataan umum","Deretan penjelas","Orientasi"],"Struktur eksplanasi diakhiri interpretasi (opsional)."],
+["BIN","W","Pemilihan kata yang tepat oleh penyair dalam puisi disebut ...",["Diksi","Rima","Amanat","Tipografi"],"Diksi adalah pilihan kata yang mengandung makna dan keindahan."],
+["BIN","W","Tokoh yang berwatak baik, jujur, dan suka menolong dalam cerita fantasi disebut tokoh ...",["Protagonis","Antagonis","Tritagonis","Figuran"],"Protagonis adalah tokoh utama yang berwatak baik."],
+["BIN","R","Pada kalimat “Presiden meresmikan jembatan baru kemarin”, kata yang menjawab unsur kapan adalah ...",["kemarin","Presiden","jembatan","meresmikan"],"Kata keterangan waktu menjawab unsur “kapan” pada ADIKSIMBA."],
+["BIN","R","Sudut pandang orang pertama ditandai dengan penggunaan kata ganti ...",["Aku atau saya","Dia atau ia","Mereka","Kamu"],"Narator terlibat langsung dalam cerita dan memakai aku atau saya."]
 ];
 const LT=[ // Set 3: Latihan Mandiri
 ["MTK","W","Hasil dari −12 + 7 − (−5) adalah ...",["0","−10","−24","10"],"−12 + 7 = −5, lalu −5 − (−5) = −5 + 5 = 0."],
