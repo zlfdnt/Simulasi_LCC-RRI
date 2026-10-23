@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap"><title>Simulasi LCC – Babak Penyisihan</title>
+<style>
+:root{--t0:#ff4d6d;--t1:#2fa8ff;--t2:#2ee59d;--t3:#b66dff;--cy:#4de6ff;--cy2:#19d3ff;--ink:#e9fdff;--ok:#2ee59d;--no:#ff4d6d;--fd:Orbitron,"Courier New",monospace}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--ink);font-family:"Segoe UI",system-ui,"Trebuchet MS",sans-serif;font-size:clamp(14px,1.35vw,21px);background:radial-gradient(ellipse at 50% -10%,#0e5c8a,#041a30 55%,#020b16) fixed;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:linear-gradient(#4de6ff14 1px,transparent 1px) 0 0/100% 48px,linear-gradient(90deg,#4de6ff14 1px,transparent 1px) 0 0/48px 100%;-webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 20%,transparent 80%);mask-image:radial-gradient(ellipse at 50% 30%,#000 20%,transparent 80%)}
+body::after{content:"";position:fixed;top:-10%;left:50%;width:70vw;height:70vh;transform:translateX(-50%);z-index:-1;background:radial-gradient(ellipse,#19d3ff40,transparent 65%);animation:glow 8s ease-in-out infinite alternate}
+@keyframes glow{to{opacity:.5;transform:translateX(-50%) scale(1.15)}}
+#app{max-width:1400px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;gap:1.4vmin;padding:1.4vmin}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+h1{margin:0;font-family:var(--fd);font-size:1em;letter-spacing:.14em;color:var(--cy);text-shadow:0 0 12px var(--cy2)}
+.tools{display:flex;gap:6px;align-items:center}
+button{font:inherit;font-weight:700;border:1.5px solid #bff8ff;border-radius:12px;padding:.7em 1.2em;cursor:pointer;color:#02263a;background:linear-gradient(180deg,#8ff5ff,#19d3ff);box-shadow:0 0 18px #19d3ff88;min-height:46px;transition:transform .12s,box-shadow .12s,filter .12s}
+button:hover{transform:translateY(-2px);box-shadow:0 0 28px #4de6ffcc;filter:brightness(1.08)}button:active{transform:scale(.96)}
+button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.ghost{background:#06223acc;color:var(--ink);border-color:#4de6ff88;box-shadow:inset 0 0 14px #19d3ff33,0 0 10px #19d3ff33}.sm{min-height:34px;padding:.3em .8em;margin-top:.3em}
+.tools button{min-height:38px;padding:.3em .8em}
+#sc{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4vmin}
+.card{position:relative;background:linear-gradient(180deg,#0a3556cc,#06223acc);border:1.5px solid #4de6ff66;border-bottom:.4em solid var(--c);border-radius:14px;padding:.6em;text-align:center;transition:.2s;box-shadow:0 0 16px #19d3ff22}
+.card .av{font-size:1.7em}.card b{font-family:var(--fd);font-size:.85em;letter-spacing:.06em}
+.pt{font-family:"Segoe UI",system-ui,sans-serif;font-size:clamp(1.6em,4vw,3.6em);font-weight:900;line-height:1.1;color:var(--c);text-shadow:0 0 14px var(--c)}
+.card.on{background:linear-gradient(180deg,var(--c),#06223a);box-shadow:0 0 0 3px #fff,0 0 36px var(--c);transform:scale(1.04)}.card.on .pt{color:#fff}
+.card.lk{opacity:.4}.tag{font-size:.8em;background:#fff;color:#02263a;border-radius:99px;padding:.1em .7em;display:inline-block;animation:pulse .8s infinite alternate}
+@keyframes pulse{to{transform:scale(1.08)}}
+#main{flex:1;display:flex;flex-direction:column;gap:1.4vmin}
+.cover{position:relative;overflow:hidden;border-radius:20px;min-height:76vh;margin:auto;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vmin;width:100%;background:#020b16;border:1.5px solid #4de6ff66;box-shadow:0 0 40px #19d3ff33}
+.emo{font-size:clamp(2.4em,8vw,5em);animation:bob 2s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(-12px)}}
+.big{margin:0;font-family:var(--fd);font-size:clamp(1.5em,5.6vw,5em);line-height:1.15;font-weight:900;background:linear-gradient(90deg,#e9fdff,#4de6ff,#2fa8ff,#e9fdff);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:flow 6s linear infinite}
+@keyframes flow{to{background-position:300%}}
+.go{font-family:var(--fd);font-size:1.3em;letter-spacing:.08em;padding:.7em 1.6em;animation:pulse 1s infinite alternate}
+.studio{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 50% 18%,#0e5c8a,#041a30 62%,#020b16)}
+.beam{position:absolute;top:-12%;width:30%;height:125%;background:linear-gradient(180deg,#d9fbffcc,transparent 72%);clip-path:polygon(43% 0,57% 0,100% 100%,0 100%);opacity:.3;transform-origin:50% 0;animation:sweep 7s ease-in-out infinite alternate}
+@keyframes sweep{from{transform:rotate(calc(var(--r) - 6deg))}to{transform:rotate(calc(var(--r) + 6deg))}}
+.sign{position:absolute;top:2%;left:50%;transform:translateX(-50%);width:92%;text-align:center}
+.neon{font-family:var(--fd);font-weight:900;font-size:clamp(1.4em,4vw,3em);letter-spacing:.3em;color:#e9fdff;text-shadow:0 0 8px #4de6ff,0 0 24px #19d3ff,0 0 48px #19d3ff;animation:flick 4s infinite}
+@keyframes flick{0%,92%,100%{opacity:1}94%{opacity:.5}96%{opacity:1}98%{opacity:.6}}
+.sub{font-family:var(--fd);font-weight:700;font-size:clamp(.55em,1.4vw,1em);letter-spacing:.2em;color:#9eeeff;text-shadow:0 0 10px #19d3ff}
+.wall{position:absolute;left:50%;top:19%;transform:translateX(-50%) perspective(900px) rotateX(5deg);width:min(54%,48vh);aspect-ratio:1;display:grid;grid-template-columns:repeat(5,1fr);gap:1.4%;padding:2%;background:#031a2e;border:3px solid #7ff3ff;border-radius:8px;box-shadow:0 0 60px #19d3ff88,inset 0 0 40px #19d3ff55;opacity:.5}
+.wall i{font-style:normal;display:grid;place-items:center;font-family:var(--fd);font-weight:800;font-size:clamp(.8em,2.2vw,1.9em);color:#c8faff;background:linear-gradient(160deg,#0b3a5c,#06223a);border:1.5px solid #4de6ff;border-radius:4px;text-shadow:0 0 10px #19d3ff;animation:blink 3s infinite}
+.wall i:nth-child(3n){animation-delay:-1s}.wall i:nth-child(5n+2){animation-delay:-2s}.wall i:nth-child(7n){animation-delay:-.5s}
+@keyframes blink{50%{background:#0e5f8f;box-shadow:0 0 14px #4de6ff}}
+.floor{position:absolute;left:0;right:0;bottom:0;height:36%;background:linear-gradient(180deg,transparent,#06324f99 45%,#0a6a96),linear-gradient(#4de6ff33 1px,transparent 1px) 0 0/100% 28px,linear-gradient(90deg,#4de6ff33 1px,transparent 1px) 0 0/64px 100%}
+.pods{position:absolute;bottom:4%;left:0;right:0;display:flex;justify-content:center;gap:5%;padding:0 4%}
+.pod{position:relative;flex:0 1 17%;max-width:180px;height:clamp(64px,15vh,130px);clip-path:polygon(7% 0,93% 0,100% 100%,0 100%);background:linear-gradient(180deg,#f2fdff 0,#8cc5d6 14%,#0b2f4d 15%,#04182b)}
+.pod::before{content:"";position:absolute;left:50%;top:22%;width:30%;aspect-ratio:1;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--c) 45%,#0006);box-shadow:0 0 20px var(--c);animation:pulse 1.2s infinite alternate}
+.pod::after{content:"";position:absolute;left:12%;right:12%;bottom:12%;height:4px;background:#4de6ff;box-shadow:0 0 12px #4de6ff}
+.ct{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:2.4vmin;padding:3vmin 4vmin;background:radial-gradient(ellipse,#020b16cc 25%,transparent 72%)}
+.ct .big{filter:drop-shadow(0 3px 8px #000)}
+.pg{text-align:center}.pg h2{font-family:var(--fd);margin:.2em 0 .6em;font-size:clamp(1.2em,2.8vw,2em);letter-spacing:.12em;color:var(--ink);text-shadow:0 0 12px var(--cy2),0 0 30px var(--cy2)}
+.gl{display:flex;flex-direction:column;gap:1.4vmin;max-width:980px;width:100%;margin:0 auto}
+.gr{display:grid;grid-template-columns:auto 1fr;gap:1em;align-items:start;background:linear-gradient(180deg,#0a3556cc,#06223acc);border:1.5px solid var(--c);border-radius:14px;padding:.9em 1.1em;box-shadow:0 0 14px #19d3ff33,inset 0 0 22px #19d3ff14}
+.ic{font-size:1.6em;width:2.1em;height:2.1em;display:grid;place-items:center;border-radius:50%;border:1.5px solid var(--c);box-shadow:0 0 12px var(--c),inset 0 0 12px var(--c)}
+.gr b{font-family:var(--fd);letter-spacing:.06em;color:var(--c);text-shadow:0 0 8px var(--c)}
+.gr p{margin:.35em 0 0;line-height:1.6;text-align:justify;text-justify:inter-word;hyphens:auto;-webkit-hyphens:auto;font-weight:500}
+.tm4{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.6vmin}
+.tc{background:linear-gradient(180deg,#0a3556cc,#06223acc);border:1.5px solid #4de6ff66;border-top:.4em solid var(--c);border-radius:16px;padding:.8em;text-align:center;box-shadow:0 0 18px #19d3ff33,inset 0 0 20px #19d3ff14}.tc .av{font-size:2.6em;filter:drop-shadow(0 0 10px var(--c))}
+input[type=text]{font:inherit;font-weight:700;text-align:center;padding:.6em;border-radius:10px;border:1.5px solid #4de6ff88;background:#031a2e;color:var(--ink);width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.chip input{position:absolute;opacity:0}.chip span{display:block;padding:.6em 1.1em;border-radius:99px;background:#06223acc;border:1.5px solid #4de6ff66;font-weight:700;cursor:pointer;transition:.15s}
+.chip input:checked+span{background:linear-gradient(180deg,#8ff5ff,#19d3ff);color:#02263a;box-shadow:0 0 18px #19d3ff;transform:scale(1.06)}.chip input:focus-visible+span{outline:3px solid #fff}
+.sec{margin:.4em 0 0;font-family:var(--fd);font-size:1.05em;letter-spacing:.1em;color:var(--cy);text-shadow:0 0 10px var(--cy2);display:flex;align-items:center;gap:.7em}.sec::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--cy),transparent)}.sec small{opacity:.75;font:500 .8em "Segoe UI",sans-serif;letter-spacing:0;color:var(--ink);text-shadow:none}
+.nx{background:#06223acc;border:1px solid #4de6ff44;border-radius:12px;padding:.5em 1em}
+.wh{display:flex;justify-content:space-between;align-items:baseline;gap:.4em 1em;flex-wrap:wrap;margin-top:.4em}
+.wh h3{margin:0;font-family:var(--fd);font-size:1.05em;letter-spacing:.08em;color:#ffd86b;text-shadow:0 0 10px #ffb02088}.wh small{opacity:.8;font-size:.8em}
+.map{display:grid;grid-template-columns:repeat(10,1fr);gap:1.5vmin;padding:1.8vmin;border:3px solid #7ff3ff;border-radius:22px;background:repeating-linear-gradient(135deg,#0b2b2c 0 16px,#0e3a39 16px 32px);box-shadow:0 0 26px #19d3ff77,inset 0 0 40px #000a}
+.tile{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.05em;padding:0;color:#fff;border:3px solid #ffe08a;border-radius:16px;background:linear-gradient(135deg,#ffffff59 0,transparent 38%),linear-gradient(160deg,var(--c),#0a1630 140%);box-shadow:0 0 0 3px #1a1200,0 6px 10px #000a}
+.tile::before{content:"";position:absolute;inset:5px;border:1px solid #ffffff55;border-radius:10px;pointer-events:none}
+.tile small{font-family:var(--fd);font-size:.5em;font-weight:900;letter-spacing:.08em;color:#ffe08a;text-shadow:0 1px 0 #000}
+.tile b{font-family:var(--fd);font-size:1.7em;line-height:1;text-shadow:0 2px 0 #000,1px 1px 0 #000,-1px 1px 0 #000}.tile span{font-size:1.1em}
+.tile:hover{box-shadow:0 0 0 3px #1a1200,0 0 26px #ffe08a;transform:translateY(-3px) scale(1.04)}
+.tile.ok,.tile.no{filter:grayscale(.85) brightness(.55);box-shadow:0 0 0 3px #1a1200;transform:none;cursor:default}
+.tile.ok::after,.tile.no::after{content:"✔";position:absolute;font-size:2.2em;color:#2ee59d;text-shadow:0 2px 6px #000;filter:none}.tile.no::after{content:"✘";color:#ff4d6d}
+.leg{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.leg span{background:#06223acc;border:1px solid #4de6ff55;border-radius:99px;padding:.3em .9em;font-size:.8em;font-weight:700}
+.foot{display:flex;gap:10px;justify-content:center;margin-top:auto;padding-top:1vmin}
+.qp{background:linear-gradient(180deg,#0a3556d9,#06223ae6);border:1.5px solid #4de6ff88;border-radius:16px;padding:2vmin 3vmin;display:flex;flex-direction:column;gap:1.4vmin;box-shadow:0 0 30px #19d3ff33,inset 0 0 30px #19d3ff14}
+.who{background:linear-gradient(90deg,transparent,var(--c) 15%,var(--c) 85%,transparent);border-radius:10px;padding:.6em 1em;font-family:var(--fd);font-size:clamp(1em,2vw,1.5em);font-weight:900;text-align:center;letter-spacing:.05em;text-shadow:0 0 10px #000}
+.who.pulse{animation:pulse .7s infinite alternate;filter:drop-shadow(0 0 14px var(--c))}
+.meta{color:var(--cy);font-weight:700;text-shadow:0 0 8px var(--cy2)}.q{font-size:clamp(1.3em,3vw,2.7em);font-weight:700;line-height:1.3}.note{font-size:1.1em;color:#ffd23f}
+.ops{display:grid;grid-template-columns:1fr 1fr;gap:1.4vmin}
+.op{display:flex;gap:.7em;align-items:center;text-align:left;font-size:1.2em;font-weight:600;color:var(--ink);background:#06223af0;border:1.5px solid var(--c);border-radius:12px;padding:.8em 1em;box-shadow:0 0 14px #19d3ff33,inset 0 0 18px #19d3ff14}
+.op i{font-style:normal;font-family:var(--fd);background:var(--c);color:#02121f;border-radius:8px;min-width:1.8em;height:1.8em;display:grid;place-items:center;flex:none;font-weight:900}
+.o0{--c:#ff4d6d}.o1{--c:#2fa8ff}.o2{--c:#ffb020}.o3{--c:#2ee59d}
+.op:disabled{opacity:.75;cursor:default;transform:none;filter:none}.op.right{opacity:1;background:#0d5a45;border-color:#2ee59d;box-shadow:0 0 32px #2ee59d;animation:pulse .6s 3 alternate}.op.wrong{opacity:.45;text-decoration:line-through}
+.bells{display:flex;flex-wrap:wrap;gap:1vmin;justify-content:center}.bl{background:var(--c);color:#02121f;border-color:#fff;box-shadow:0 0 18px var(--c);font-size:1.2em}
+.row{display:flex;gap:2vmin;align-items:center;justify-content:center;flex-wrap:wrap}
+#tm{position:relative;z-index:0;width:clamp(80px,10vw,150px);aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-family:var(--fd);font-size:clamp(1.8em,4vw,3.6em);font-weight:900;text-shadow:0 0 12px var(--cy2);background:conic-gradient(var(--cy) calc(var(--p)*1%),#ffffff22 0);box-shadow:0 0 24px #19d3ff66}
+#tm::before{content:"";position:absolute;inset:9%;border-radius:50%;background:#06223a;z-index:-1}
+.res{background:#06223acc;border:1.5px solid var(--ok);border-left:.4em solid var(--ok);border-radius:12px;padding:.8em 1em;line-height:1.5;box-shadow:0 0 18px #2ee59d33}.res b{color:var(--ok)}
+.ctl{display:flex;gap:1vmin;justify-content:center;flex-wrap:wrap}
+.rank{display:flex;gap:.6em;align-items:center;justify-content:center;font-family:var(--fd);font-size:1.3em;padding:.3em;color:var(--c);text-shadow:0 0 10px var(--c)}
+.cf{position:fixed;top:-20px;width:10px;height:14px;z-index:9;pointer-events:none;animation:fall 2s linear forwards}@keyframes fall{to{transform:translateY(108vh) rotate(720deg)}}
+@media(max-width:900px){.map{grid-template-columns:repeat(5,1fr)}}
+@media(max-width:700px){#sc{grid-template-columns:1fr 1fr}.ops{grid-template-columns:1fr}.ctl button,.go{width:100%}.gr{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*,::before,::after{animation:none!important;transition:none!important}}
+</style></head>
+<body><div id="app">
+<header><h1>Simulasi LCC · Penyisihan</h1>
+<div class="tools"><input id="vol" type="range" min="0" max="1" step=".1" value=".7" style="width:80px" aria-label="Volume"><button class="ghost" data-a="mute" id="mu" title="Suara">🔊</button><button class="ghost" data-a="tts" id="tt" title="Bacakan soal otomatis">🗣️</button><button class="ghost" data-a="exit" id="ex" title="Keluar ke halaman muka">🚪 Keluar</button><button class="ghost" data-a="fs" title="Layar penuh">⛶</button></div></header>
+<div id="sc"></div><div id="main"></div></div>
+<script>
+const API="https://script.google.com/macros/s/AKfycbyPopT0QznHudfr2oUOXTOjOsKhfr3LnKZeycUCG6JpSLQ3r0bgjbIUxuvlvl2QfeAM/exec"; // web app Apps Script (lihat Code.gs); kosongkan untuk memakai soal bawaan
+const MP={BIN:["Bahasa Indonesia","📖","#ff5a5f"],ING:["Bahasa Inggris","🌍","#2fa8ff"],MTK:["Matematika","➕","#ff9f1c"],IPA:["IPA","🔬","#1fbf7a"],IPS:["IPS","🗺️","#a45cff"]};
+const AV=["🦁","🐯","🦅","🐬"];
+let D=[ // [mapel, jenis (W/R), soal, [jawaban benar, pengecoh1, pengecoh2, pengecoh3], pembahasan]
+["MTK","W","Dalam sebuah kuis, jawaban benar mendapat +4 dan salah −2. Rina menjawab 7 soal benar dan 3 soal salah. Berapa skor akhir Rina?",["22","28","26","18"],"7 × 4 = 28 dan 3 × (−2) = −6, sehingga skor = 28 − 6 = 22."],
+["MTK","W","Suhu pagi hari −3 °C, naik 10 °C pada siang hari, lalu turun 6 °C pada malam hari. Berapa suhu malam hari itu?",["1 °C","−1 °C","13 °C","7 °C"],"−3 + 10 = 7, lalu 7 − 6 = 1 °C."],
+["MTK","W","Bentuk paling sederhana dari 5a + 3b − 2a + b adalah ...",["3a + 4b","7a + 4b","3a + 2b","12ab"],"Suku sejenis digabung: 5a − 2a = 3a dan 3b + b = 4b."],
+["MTK","W","Nilai x yang memenuhi persamaan 3x + 5 = 20 adalah ...",["5","3","7","15"],"3x = 20 − 5 = 15, maka x = 5."],
+["MTK","W","Jarak dua kota pada peta 4 cm dengan skala 1 : 2.000.000. Jarak sebenarnya adalah ...",["80 km","8 km","800 km","40 km"],"4 × 2.000.000 = 8.000.000 cm = 80 km."],
+["MTK","W","Suku ke-10 dari barisan 3, 7, 11, 15, ... adalah ...",["39","43","36","40"],"a = 3, beda = 4, U10 = 3 + 9 × 4 = 39."],
+["MTK","R","Hasil dari (−5) × (−4) + (−8) adalah ...",["12","−12","28","−28"],"(−5) × (−4) = 20, lalu 20 + (−8) = 12."],
+["MTK","R","Hasil dari 2³ × 2⁴ adalah ...",["128","64","256","32"],"Pangkat dijumlahkan: 2⁷ = 128."],
+["MTK","R","Median dari data 7, 3, 9, 5, 8 adalah ...",["7","5","8","6,4"],"Diurutkan 3, 5, 7, 8, 9; nilai tengahnya 7."],
+["MTK","R","Diketahui x + y = 10 dan x − y = 2. Nilai x adalah ...",["6","4","8","12"],"Dijumlahkan: 2x = 12, maka x = 6."],
+["IPA","W","Variabel yang sengaja diubah-ubah dalam suatu percobaan disebut ...",["Variabel bebas","Variabel terikat","Variabel kontrol","Variabel tetap"],"Variabel bebas diubah, variabel terikat diamati, variabel kontrol dijaga sama."],
+["IPA","W","Perubahan wujud zat dari gas menjadi cair disebut ...",["Mengembun","Menguap","Menyublim","Membeku"],"Gas menjadi cair = mengembun; cair menjadi gas = menguap."],
+["IPA","W","Satuan SI untuk kalor adalah ...",["Joule","Kalori","Watt","Newton"],"Kalor adalah energi, sehingga satuan SI-nya joule (J)."],
+["IPA","W","Benda bermassa 2 kg dipercepat 3 m/s². Besar gaya yang bekerja adalah ...",["6 N","1,5 N","5 N","9 N"],"F = m × a = 2 × 3 = 6 N."],
+["IPA","W","Tingkatan takson yang paling kecil dalam klasifikasi makhluk hidup adalah ...",["Spesies","Genus","Famili","Kingdom"],"Urutan besar ke kecil: kingdom, filum, kelas, ordo, famili, genus, spesies."],
+["IPA","W","Gerak Bumi mengelilingi Matahari disebut ...",["Revolusi","Rotasi","Evolusi","Gerhana"],"Revolusi Bumi (±365 hari) menyebabkan pergantian musim; rotasi menyebabkan siang dan malam."],
+["IPA","R","Benda bermassa 100 g memiliki volume 50 cm³. Massa jenis benda itu adalah ...",["2 g/cm³","0,5 g/cm³","5 g/cm³","50 g/cm³"],"ρ = m ÷ V = 100 ÷ 50 = 2 g/cm³."],
+["IPA","R","Pembuluh darah yang membawa darah dari jantung ke seluruh tubuh adalah ...",["Arteri","Vena","Kapiler","Alveolus"],"Arteri (nadi) keluar dari jantung; vena menuju jantung."],
+["IPA","R","Hukum yang menyatakan benda dalam zat cair mendapat gaya ke atas sebesar berat zat cair yang dipindahkan adalah hukum ...",["Archimedes","Pascal","Newton","Boyle"],"Hukum Archimedes menjelaskan benda mengapung, melayang, dan tenggelam."],
+["IPA","R","Cara memperoleh garam dari air laut adalah dengan ...",["Penguapan (kristalisasi)","Penyaringan","Pengayakan","Pemisahan magnet"],"Air diuapkan sehingga garam tertinggal dan membentuk kristal."],
+["IPS","W","Kelemahan utama sistem barter adalah ...",["Sulit menemukan pihak yang kebutuhannya saling cocok","Terlalu banyak uang beredar","Nilai barang selalu sama","Barang tidak bisa diangkut"],"Barter butuh kebetulan ganda: dua pihak harus saling membutuhkan barang yang ditawarkan."],
+["IPS","W","Lembaga yang berwenang menerbitkan uang kartal di Indonesia adalah ...",["Bank Indonesia","Kementerian Keuangan","Otoritas Jasa Keuangan","Bank Mandiri"],"Uang kartal (kertas dan logam) diterbitkan oleh Bank Indonesia sebagai bank sentral."],
+["IPS","W","Urutan kegiatan ekonomi yang benar adalah ...",["Produksi – distribusi – konsumsi","Konsumsi – produksi – distribusi","Distribusi – produksi – konsumsi","Produksi – konsumsi – distribusi"],"Barang dibuat (produksi), disalurkan (distribusi), lalu dipakai (konsumsi)."],
+["IPS","W","Saat terjadi gempa di dalam kelas, tindakan yang tepat adalah berlindung ...",["Di bawah meja yang kokoh","Di dekat jendela kaca","Di dalam lift","Di depan pintu sambil berdiri"],"Meja kokoh melindungi kepala dari reruntuhan; setelah guncangan berhenti, evakuasi lewat jalur aman."],
+["IPS","W","Proses peleburan dua kebudayaan yang menghasilkan kebudayaan baru disebut ...",["Asimilasi","Akulturasi","Akomodasi","Kompetisi"],"Akulturasi: budaya bercampur tetapi ciri aslinya tampak; asimilasi: melebur menjadi budaya baru."],
+["IPS","W","Ketua Badan Penyelidik Usaha-Usaha Persiapan Kemerdekaan Indonesia (BPUPKI) adalah ...",["dr. Radjiman Wedyodiningrat","Ir. Soekarno","Drs. Moh. Hatta","Ki Hajar Dewantara"],"BPUPKI dibentuk tahun 1945 dan diketuai dr. K.R.T. Radjiman Wedyodiningrat."],
+["IPS","R","Surat perintah pencairan tunai disebut ...",["Cek","Bilyet giro","Deposito","Obligasi"],"Cek termasuk uang giral dan dapat diuangkan langsung di bank."],
+["IPS","R","Fungsi utama pegadaian adalah ...",["Memberi pinjaman dengan jaminan barang","Menerbitkan uang kartal","Mengatur suku bunga","Menerima tabungan pelajar"],"Pegadaian adalah lembaga keuangan non-bank yang memberi kredit dengan jaminan barang."],
+["IPS","R","Bencana yang disebabkan oleh pergerakan lempeng bumi adalah ...",["Gempa bumi","Banjir","Kekeringan","Angin puting beliung"],"Pergeseran lempeng tektonik melepaskan energi berupa getaran gempa."],
+["IPS","R","Naskah proklamasi kemerdekaan Indonesia diketik oleh ...",["Sayuti Melik","Ahmad Soebardjo","Fatmawati","Sukarni"],"Naskah tulisan tangan Soekarno diketik oleh Sayuti Melik dengan beberapa perubahan."],
+["ING","W","Choose the best response to “Nice to meet you.”",["Nice to meet you, too.","You're welcome.","I'm fine, thank you.","See you later."],"A polite reply to “Nice to meet you” is “Nice to meet you, too.”"],
+["ING","W","How do we say 08:30 in English?",["Half past eight","Half past nine","Eight to thirty","Thirty past eight"],"08:30 = half past eight (atau eight thirty)."],
+["ING","W","What is the plural form of “child”?",["Children","Childs","Childrens","Childes"],"Child is an irregular noun: child – children."],
+["ING","W","Choose the correct negative form of: “She likes coffee.”",["She does not like coffee.","She not likes coffee.","She do not like coffee.","She does not likes coffee."],"Simple present, subject she: does not + verb 1 (like, tanpa -s)."],
+["ING","W","What is the past form (Verb 2) of “buy”?",["Bought","Buyed","Buyt","Boughed"],"Buy – bought – bought."],
+["ING","W","Choose the correct passive form of: “Rina cleans the room.”",["The room is cleaned by Rina.","The room cleaned by Rina.","The room is clean by Rina.","The room was cleaning by Rina."],"Pola passive simple present: is/am/are + Verb 3 + by."],
+["ING","R","What is the past form (Verb 2) of “eat”?",["Ate","Eated","Eaten","Eat"],"Eat – ate – eaten."],
+["ING","R","What is the superlative form of “bad”?",["Worst","Baddest","Worse","Most bad"],"Bad – worse – worst."],
+["ING","R","What is the past participle (Verb 3) of “write”?",["Written","Wrote","Writed","Writting"],"Write – wrote – written."],
+["ING","R","Which word has the same meaning as “beautiful”?",["Pretty","Ugly","Terrible","Small"],"Beautiful = pretty (cantik)."],
+["BIN","W","Bagian teks prosedur yang berisi urutan kegiatan untuk mencapai tujuan disebut ...",["Langkah-langkah","Tujuan","Orientasi","Reorientasi"],"Struktur teks prosedur: tujuan, alat/bahan, dan langkah-langkah."],
+["BIN","W","Teks yang bertujuan melukiskan objek sehingga pembaca seolah-olah melihat dan merasakannya disebut teks ...",["Deskripsi","Eksposisi","Prosedur","Berita"],"Teks deskripsi memakai cerapan pancaindra untuk menggambarkan objek."],
+["BIN","W","Bagian teks eksplanasi yang menjelaskan proses sebab-akibat suatu fenomena disebut ...",["Deretan penjelas","Pernyataan umum","Interpretasi","Orientasi"],"Struktur eksplanasi: pernyataan umum, deretan penjelas, interpretasi."],
+["BIN","W","Kalimat yang berisi pendapat penulis dan belum tentu terbukti kebenarannya disebut kalimat ...",["Opini","Fakta","Data","Definisi"],"Fakta dapat dibuktikan; opini bersifat subjektif."],
+["BIN","W","Tokoh yang berperan menentang tokoh utama dalam cerpen disebut tokoh ...",["Antagonis","Protagonis","Tritagonis","Figuran"],"Protagonis: tokoh utama; antagonis: penentang tokoh utama."],
+["BIN","W","Dalam unsur berita ADIKSIMBA, unsur yang menanyakan sebab terjadinya peristiwa adalah ...",["Mengapa","Siapa","Kapan","Di mana"],"ADIKSIMBA: apa, di mana, kapan, siapa, mengapa, bagaimana."],
+["BIN","R","Bentuk kata “pukul” setelah mendapat awalan meN- adalah ...",["Memukul","Mempukul","Mengpukul","Menpukul"],"Huruf awal p luluh: meN- + pukul = memukul."],
+["BIN","R","Pesan yang ingin disampaikan penyair kepada pembaca dalam puisi disebut ...",["Amanat","Tema","Latar","Diksi"],"Amanat adalah pesan moral; tema adalah gagasan pokok."],
+["BIN","R","Makna kata yang sebenarnya, sesuai kamus, disebut makna ...",["Denotasi","Konotasi","Majas","Idiom"],"Lawan denotasi adalah konotasi (makna kiasan)."],
+["BIN","R","Pengumpulan data dengan bertanya langsung kepada narasumber disebut ...",["Wawancara","Observasi","Studi pustaka","Angket"],"Observasi: pengamatan langsung; studi pustaka: membaca literatur."]
+];
+const $=s=>document.querySelector(s),SS=window.speechSynthesis;
+let S={scr:"cover"},AC,vol=.7,mute=false,tts=true,tok=0;
+/* ---------- SOUND ---------- */
+const ctx=()=>{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();return AC};
+function tone(f,d=.15,ty="sine",t0=0,g=.25,f2){const c=ctx(),o=c.createOscillator(),a=c.createGain(),t=c.currentTime+t0,m=mute?0:vol;o.type=ty;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);a.gain.setValueAtTime(.0001,t);a.gain.exponentialRampToValueAtTime(g*m+.0001,t+.01);a.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(a).connect(c.destination);o.start(t);o.stop(t+d+.02)}
+function noise(d,g,t0){const c=ctx(),b=c.createBuffer(1,c.sampleRate*d,c.sampleRate),x=b.getChannelData(0);for(let i=0;i<x.length;i++)x[i]=(Math.random()*2-1)*(1-i/x.length);const s=c.createBufferSource(),a=c.createGain();s.buffer=b;a.gain.value=g*(mute?0:vol);s.connect(a).connect(c.destination);s.start(c.currentTime+t0)}
+const OK=[()=>[523,659,784,1047].forEach((f,k)=>tone(f,.2,"triangle",k*.1,.3)),()=>{tone(1318,.3,"sine",0,.3);tone(1760,.5,"sine",.12,.3)},()=>{tone(400,.4,"sawtooth",0,.12,1200);tone(1200,.4,"triangle",.4,.25)},()=>{for(let k=0;k<16;k++)noise(.06,.4,k*.04);tone(880,.4,"triangle",0,.25);tone(1175,.5,"triangle",.15,.25)}];
+const BAD=[()=>tone(150,.5,"sawtooth",0,.3),()=>tone(400,.55,"triangle",0,.3,110),()=>{tone(311,.3,"square",0,.14);tone(233,.5,"square",.3,.14)},()=>{tone(300,.15,"sine",0,.3,200);tone(220,.35,"sine",.18,.3,100)}];
+let lo=-1,lb=-1;const pk=(a,l)=>{let i;do i=Math.random()*a.length|0;while(i===l);return i};
+const snd={click:()=>tone(900,.05,"square",0,.08),tick:()=>tone(1000,.05,"square",0,.1),buzz:()=>tone(120,.8,"sawtooth",0,.35),
+bell:k=>{const f=[523,659,784,988][k];tone(f,.6,"triangle",0,.35);tone(f*2,.4,"sine",0,.15)},
+ok:()=>{lo=pk(OK,lo);OK[lo]()},bad:()=>{lb=pk(BAD,lb);BAD[lb]()},fan:()=>[523,659,784,1047,784,1047,1319].forEach((f,k)=>tone(f,.3,"triangle",k*.16,.3))};
+function boom(){const c=["#ff4d6d","#ffd23f","#2fa8ff","#2ee59d","#b66dff"];for(let i=0;i<46;i++){const d=document.createElement("div");d.className="cf";d.style.cssText=`left:${Math.random()*100}vw;background:${c[i%5]};animation-delay:${Math.random()*.6}s;animation-duration:${1.8+Math.random()*1.4}s`;document.body.appendChild(d);setTimeout(()=>d.remove(),3600)}}
+/* ---------- LOGIKA ---------- */
+const T=()=>S.tiles&&S.tiles[S.cur],isW=()=>T()&&T().j==="W",sh=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const snap=()=>S.h.push(JSON.stringify({sc:S.sc,ph:S.ph,act:S.act,lock:S.lock,rd:S.rd,fs:S.fs,t:S.t,bad:S.bad,pick:S.pick,msg:S.msg,ok:S.ok,note:S.note,wc:S.wc,st:T().st}));
+function speak(){if(SS)SS.cancel();const my=++tok;if(!tts||!SS)return;const t=T(),u=new SpeechSynthesisUtterance(t.s+". "+t.o.map((x,k)=>"ABCD"[k]+". "+x.t).join(". "));u.lang=t.m==="ING"?"en-US":"id-ID";u.rate=.95;u.onend=()=>{if(my===tok&&S.ph==="read")A.go()};SS.speak(u)}
+const stop=()=>{tok++;if(SS)SS.cancel()};
+function fin(ok,msg){stop();S.ph="res";S.ok=ok;S.msg=msg;T().st=ok?1:2;if(isW())S.wc++;if(ok){snd.ok();boom()}else snd.bad();render()}
+function cont(msg){if(S.lock.every(x=>x))return fin(false,msg+" Semua regu sudah mencoba.");snd.bad();S.ph=S.rd?"bell":"read";S.note=msg;render();if(S.ph==="read")speak()}
+function timeout(){if(isW()){S.pick=-1;fin(false,`⏱ Waktu habis. ${S.n[S.act]} 0 poin`)}else{S.lock[S.act]=1;cont(`⏱ ${S.n[S.act]} tidak menjawab (0 poin).`)}}
+function bell(k){if(S.scr!=="board"||!T()||isW()||!["read","bell"].includes(S.ph)||S.lock[k])return;snap();stop();S.act=k;if(S.ph==="read"){S.fs[k]++;S.note="⚠ False start! Pembacaan soal dihentikan."}else S.note="";S.ph="ans";S.t=S.tmax=10;snd.bell(k);render()}
+const A={
+mute(){mute=!mute;$("#mu").textContent=mute?"🔇":"🔊"},tts(){tts=!tts;$("#tt").textContent=tts?"🗣️":"🤐";if(!tts)stop()},
+fs(){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.()},
+guide(){S.scr="guide";render()},setup(){S.scr="setup";render()},
+start(){const n=[0,1,2,3].map(k=>$("#n"+k).value.trim()||"Regu "+(k+1)),m=document.querySelector("input[name=mp]:checked").value,d=D.filter(x=>m==="ALL"||x[0]===m),mk=x=>({m:x[0],j:x[1],s:x[2],opts:x[3],p:x[4],st:0,o:null});
+S={scr:"board",n,sc:[0,0,0,0],fs:[0,0,0,0],tiles:[...sh(d.filter(x=>x[1]==="W")).map(mk),...sh(d.filter(x=>x[1]==="R")).map(mk)],cur:-1,wc:0,h:[],ph:"",act:-1,lock:[0,0,0,0],bad:[]};navigator.wakeLock?.request("screen").catch(()=>{});render()},
+open(i){const t=S.tiles[i];if(t.st)return;S.cur=i;if(!t.o)t.o=sh(t.opts.map((x,k)=>({t:x,c:!k})));Object.assign(S,{ph:"read",rd:false,act:-1,lock:[0,0,0,0],note:"",h:[],bad:[],pick:-1,tw:S.wc%4});render();speak()},
+say(){speak()},
+go(){if(S.ph!=="read")return;snap();stop();S.rd=true;if(isW()){S.act=S.tw;S.ph="ans";S.t=S.tmax=20}else S.ph="bell";render()},
+pick(k){if(S.ph!=="ans"||S.bad.includes(k))return;snap();S.pick=k;if(T().o[k].c){S.sc[S.act]+=100;fin(true,`✔ BENAR! ${S.n[S.act]} +100`)}else if(isW())fin(false,`✘ Salah. ${S.n[S.act]} 0 poin`);else{S.sc[S.act]-=50;S.lock[S.act]=1;S.bad.push(k);cont(`✘ ${S.n[S.act]} salah (−50).`)}},
+none(){snap();fin(false,"Tidak ada regu yang menjawab benar.")},
+close(){S.cur=-1;if(S.tiles.every(t=>t.st))A.finish();else render()},
+finish(){stop();S.cur=-1;S.scr="end";snd.fan();boom();render()},
+undo(){const h=S.h&&S.h.pop();if(!h)return;const o=JSON.parse(h);T().st=o.st;delete o.st;Object.assign(S,o);render()},
+reset(){S={scr:"cover"};render()},
+exit(){if(S.scr==="board"&&(S.tiles.some(t=>t.st)||S.sc.some(x=>x))&&!confirm("Keluar ke halaman muka? Skor dan progres lomba akan hilang."))return;stop();A.reset()}};
+document.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;if(!b.classList.contains("bl"))snd.click();const d=b.dataset;
+if(d.a)A[d.a]();else if(d.b)bell(+d.b);else if(d.o)A.pick(+d.o);else if(d.t)A.open(+d.t);else if(d.p){S.h&&S.cur>=0&&snap();S.sc[+d.p]-=50;snd.bad();render()}});
+$("#vol").oninput=e=>vol=+e.target.value;
+document.addEventListener("keydown",e=>{if(/INPUT|SELECT/.test(e.target.tagName)||S.scr!=="board")return;const k=e.key.toLowerCase();if(k.length===1&&"1234".includes(k))bell(+k-1);else if(k.length===1&&"abcd".includes(k))A.pick("abcd".indexOf(k));else if(k==="u")A.undo();else if(k===" "){e.preventDefault();if(S.ph==="read")A.go();else if(S.ph==="res")A.close()}});
+setInterval(()=>{if(S.ph!=="ans")return;S.t-=.1;if(S.t<=0){S.t=0;snd.buzz();timeout();return}const c=Math.ceil(S.t);if(c!==S.lc){S.lc=c;if(c<=5)snd.tick()}const e=$("#tm");if(e){e.textContent=c;e.style.setProperty("--p",S.t/S.tmax*100)}},100);
+/* ---------- TAMPILAN ---------- */
+const G=[["🎯","Pilih kotak soal","Juri mengklik salah satu kotak bernomor pada papan soal. Soal langsung dibacakan secara otomatis beserta pilihan jawaban A sampai D, kemudian juri mengetuk pilihan yang diucapkan oleh regu.","#4de6ff"],["🔄","Soal Wajib","Soal diberikan secara bergilir kepada setiap regu. Regu yang mendapat giliran menjawab maksimal 20 detik setelah soal selesai dibacakan. Jawaban benar bernilai +100, jawaban salah atau tidak menjawab bernilai 0, dan soal tidak dilempar kepada regu lain.","#2fa8ff"],["⚡","Soal Rebutan","Setelah soal selesai dibacakan, regu yang paling cepat menekan bel berhak menjawab dalam 10 detik. Jawaban benar bernilai +100 dan jawaban salah bernilai −50, kemudian regu lain diberi kesempatan untuk menjawab soal yang sama.","#ffb020"],["⚠️","Ketentuan","Bel yang ditekan sebelum soal selesai dibacakan dinyatakan false start. Regu wajib menyebutkan nama regunya sebelum menjawab, dan hanya jawaban pertama yang diucapkan yang dinilai. Kegaduhan atau penggunaan alat bantu dikenai sanksi pengurangan 50 poin.","#2ee59d"],["⌨️","Pintasan juri","Tombol 1 sampai 4 untuk bel regu, huruf A sampai D untuk memilih jawaban, tombol Spasi untuk melanjutkan, dan huruf U untuk membatalkan tindakan terakhir.","#b66dff"]];
+const V={
+cover:()=>`<div class="cover"><div class="studio"><div class="beam" style="--r:16deg;left:3%"></div><div class="beam" style="--r:-16deg;right:3%"></div><div class="sign"><div class="neon">LCC</div><div class="sub">Lomba Cerdas Cermat SMP · Babak Penyisihan</div></div><div class="wall">${Array.from({length:25},(_,i)=>`<i>${i+1}</i>`).join("")}</div><div class="floor"></div><div class="pods">${[0,1,2,3].map(k=>`<div class="pod" style="--c:var(--t${k})"></div>`).join("")}</div></div><div class="ct"><h2 class="big">ARE YOU READY<br>FOR THE<br>SIMULATION?</h2><button class="go" data-a="guide">I'M READY! 🚀</button></div></div>`,
+guide:()=>`<div class="pg"><h2>Petunjuk Pengerjaan</h2></div><div class="gl">${G.map(g=>`<div class="gr" style="--c:${g[3]}"><div class="ic">${g[0]}</div><div><b>${g[1]}</b><p>${g[2]}</p></div></div>`).join("")}</div><div class="foot"><button data-a="setup">Lanjut ke persiapan ▶</button></div>`,
+setup:()=>`<div class="pg"><h2>Persiapan Lomba</h2></div><div class="tm4">${[0,1,2,3].map(k=>`<div class="tc" style="--c:var(--t${k})"><div class="av">${AV[k]}</div><input type="text" id="n${k}" value="Regu ${k+1}" maxlength="22" aria-label="Nama regu ${k+1}"></div>`).join("")}</div>
+<div class="pg"><h3>Pilih mata pelajaran</h3><div class="chips"><label class="chip"><input type="radio" name="mp" value="ALL" checked><span>🌈 Semua (${D.length} soal)</span></label>${Object.entries(MP).map(([k,v])=>`<label class="chip"><input type="radio" name="mp" value="${k}"><span>${v[1]} ${v[0]}</span></label>`).join("")}</div></div><div class="foot"><button class="go" data-a="start">MULAI LOMBA 🔥</button></div>`,
+board:()=>{if(S.cur>=0)return qv();const tl=(t,i)=>`<button class="tile ${t.st===1?"ok":t.st===2?"no":""}" style="--c:${MP[t.m][2]}" data-t="${i}" ${t.st?"disabled":""} aria-label="Target ${i+1}"><small>TARGET</small><b>${String(i+1).padStart(2,"0")}</b><span>${MP[t.m][1]}</span></button>`,g=j=>S.tiles.map((t,i)=>t.j===j?tl(t,i):"").join(""),h=(t,x)=>`<div class="wh"><h3>${t}</h3><small>${x}</small></div>`,nw=S.wc%4;
+return h("🛡️ WAR MAP · TARGET SOAL WAJIB","Pilih satu target yang belum digunakan")+`<div class="nx">🎯 Giliran berikutnya: <b style="color:var(--t${nw})">${AV[nw]} ${S.n[nw]}</b> · Jawaban benar +100 poin</div><div class="map">${g("W")}</div><div class="leg"><span>✨ Target tersedia</span><span>✓ Target selesai</span><span>✗ Target gagal</span></div>`+h("⚡ WAR MAP · TARGET SOAL REBUTAN","Regu tercepat menekan bel setelah soal selesai dibacakan")+`<div class="map">${g("R")}</div><div class="foot"><button class="ghost" data-a="undo">↩ Undo</button><button class="ghost" data-a="finish">🏁 Selesai &amp; lihat hasil</button></div>`},
+end:()=>{const r=S.sc.map((s,k)=>[s,k]).sort((a,b)=>b[0]-a[0]);return `<div class="cover"><div class="studio"><div class="beam" style="--r:16deg;left:3%"></div><div class="beam" style="--r:-16deg;right:3%"></div><div class="sign"><div class="neon">LCC</div></div><div class="floor"></div></div><div class="ct"><div class="emo">🏆</div><h2 class="big">JUARA GRUP<br>${S.n[r[0][1]]}</h2>${r.map((x,i)=>`<div class="rank" style="--c:var(--t${x[1]})">${["🥇","🥈","🥉","4️⃣"][i]} ${AV[x[1]]} ${S.n[x[1]]} <b>${x[0]}</b></div>`).join("")}${r[0][0]===r[1][0]?`<div class="nx">Skor puncak seri. Selesaikan dengan soal tambahan rebutan: salah langsung gugur.</div>`:""}<button class="go" data-a="reset">Simulasi baru</button></div></div>`}};
+function qv(){const t=T(),ph=S.ph,res=ph==="res",w=isW(),who=res?[S.msg,S.ok?"#12a671":"#e0314f"]:ph==="ans"?[`✋ ${S.n[S.act]} SEDANG MENJAWAB`,`var(--t${S.act})`]:ph==="bell"?["🔔 Siap! Tekan bel regu tercepat","#e08e00"]:w?[`🎯 Giliran ${S.n[S.tw]}`,`var(--t${S.tw})`]:["🎧 Soal dibacakan… tekan bel jika siap","#e08e00"];
+return `<div class="qp"><div class="who ${ph==="ans"?"pulse":""}" style="--c:${who[1]}">${who[0]}</div><div class="meta">${MP[t.m][1]} ${MP[t.m][0]} · ${w?"Soal Wajib":"Soal Rebutan"} · Kotak ${S.cur+1}</div><div class="q">${t.s}</div>${S.note&&!res?`<div class="note">${S.note}</div>`:""}
+<div class="ops">${t.o.map((x,k)=>`<button class="op o${k} ${res&&x.c?"right":""} ${S.bad.includes(k)||(res&&S.pick===k&&!x.c)?"wrong":""}" data-o="${k}" ${ph==="ans"?"":"disabled"}><i>${"ABCD"[k]}</i>${x.t}</button>`).join("")}</div>
+${ph==="ans"?`<div class="row"><div id="tm" style="--p:${S.t/S.tmax*100}">${Math.ceil(S.t)}</div><div>Ketuk jawaban yang diucapkan ${S.n[S.act]}</div></div>`:""}
+${!w&&(ph==="read"||ph==="bell")?`<div class="bells">${S.n.map((n,k)=>S.lock[k]?"":`<button class="bl" style="--c:var(--t${k})" data-b="${k}">🔔 ${AV[k]} ${n}</button>`).join("")}</div>`:""}
+${res?`<div class="res">💡 <b>Pembahasan</b><br>Jawaban benar: <b>${t.o.find(x=>x.c).t}</b><br>${t.p}</div>`:""}
+<div class="ctl">${ph==="read"?`<button data-a="go">▶ Soal selesai dibacakan</button><button class="ghost" data-a="say">🔊 Baca ulang</button>`:""}${ph==="bell"?`<button class="ghost" data-a="none">Tidak ada yang menjawab</button>`:""}${res?`<button data-a="close">Kembali ke papan soal ▶</button>`:""}<button class="ghost" data-a="undo">↩ Undo</button></div></div>`}
+function render(){const s=S.scr;$("#ex").style.display=s==="cover"?"none":"";$("header h1").style.visibility=s==="cover"?"hidden":"";$("#sc").innerHTML=s==="board"?S.n.map((n,k)=>`<div class="card ${(S.act===k&&S.ph==="ans"&&S.cur>=0)||(S.cur>=0&&isW()&&S.tw===k&&S.ph==="read")?"on":""} ${S.cur>=0&&S.lock[k]?"lk":""}" style="--c:var(--t${k})"><div class="av">${AV[k]}</div><b>${n}</b><div class="pt">${S.sc[k]}</div>${S.act===k&&S.ph==="ans"&&S.cur>=0?'<div class="tag">✋ MENJAWAB</div>':""}${S.fs[k]?`<div><small>⚠ false start ×${S.fs[k]}</small></div>`:""}<button class="ghost sm" data-p="${k}" title="Sanksi −50">−50</button></div>`).join(""):"";$("#main").innerHTML=V[s]()}
+if(API)fetch(API).then(r=>r.json()).then(d=>{if(Array.isArray(d)&&d.length&&d.every(r=>Array.isArray(r)&&r.length>=5&&Array.isArray(r[3])&&r[3].length===4&&r[3].every(Boolean))){D=d;if(S.scr==="setup")render()}}).catch(()=>{});
+render();
+</script></body></html>
